@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet"> -->
+
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styleList.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+        integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="translations.js"></script>    
+
+
+ 
+
+
+    <title>Document</title>
+</head>
+
+<script>
+    window.whatsappMsg = "Hello%20there";
+    window.number = "+9720539295863";
+    window.whatsappUrl = 'https://api.whatsapp.com/send?phone=' + number + '&text=%20' + window.whatsappMsg;
+    window.telegramUrl = "https://t.me/+380673265753";
+
+    
+    </script>
+
+<body style="background-color:#E6E6FC; margin:0">
+
+   <div id="menu" style="position:absolute;background:transparent;" class="menu primary-white"></div>
+    <div class="main-wraper"  >
+     
+        <div id="first-block"> 
+     
+         
+        </div>
+
+        <div id="opener-block" class="primary-green default-padding">
+        
+        aaaa
+        </div>
+
+ 
+        <div id="bio-block" class="primary-grey default-padding">
+
+        </div>
+
+
+        <!-- PRICES -->
+        <div id="carusel-block" class="primary-green default-padding">
+        
+        </div>
+
+        <!-- SPECIALNOE PAKETNOE PREDLOZHENIE  -->
+        <div id="specialnoe-predlozhenie" class="primary-grey default-padding">
+        
+        </div>
+
+
+        <!-- FAQ-->
+        <div id="faq" class="primary-green default-padding">
+        
+        </div>
+
+
+        <div id="footer"  class="default-padding" style="background:black">
+
+        </div>   
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+<script>
+
+Ractive.defaults.data= {
+    translate : (path) => {
+        let pathResult = path + "." + window.currLanguage;
+        console.log("RESULT_PATH" ,  pathResult);
+       return _.get(window.translationsObject , pathResult )
+    }
+}
+
+//MENU
+     new Ractive({
+        target: "#menu",
+        template: `
+        <div style="display: flex;justify-content: space-between;">
+            <!-- <img src="res/photos/enjoy.png" style="width:6vw" > -->
+            <div style="display: flex;align-items: center; width: 100%;justify-content: center;">
+                <div style=" padding: 0 1vw;">
+                        <a href="https://instagram.com/angelina.laser.pl?igshid=ZjA0NjI3M2I=" style="background: linear-gradient(135deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);"  class="fa fa-instagram"></a>
+                </div>
+                <div style=" padding: 0 1vw;">
+                    <a href="{{@global.telegramUrl}}" class="fa fa-telegram"></a>
+                </div>
+                <div style=" padding: 0 1vw;">
+                    <a href="{{@global.whatsappUrl}}" class="fa fa-whatsapp"></a> 
+                </div>
+                <div style="padding: 0 1vw; " >
+                    <p class="text-info" style=" font-size: medium; margin-bottom: 0.1rem;margin-top: 0; " > Tel : +380999999 </p>
+                    <p class="text-info" style="font-size: medium;  margin: 0 "> Email : angelina@malishka.com </p>    
+                </div>
+            </div>
+
+            <!--  BUILD LANGUAGE SELECTOR  -->
+            <div style="display:flex; width:100px;cursor:pointer" on-click="@this.showHideMenu(@event)">
+                {{#if @global.currLanguage == "rus" }}
+                    <div style="display: flex;align-items: center; ">
+                        <img class="fa" style="height: 30px;width: 30px; padding:0; border : 1px solid black" src="res/flags/poland-big.png"> 
+                    <p style="padding-left:5px">RUS</p>
+                    </div>
+
+                {{elseif @global.currLanguage == "ukr"}}
+                    <div style="display: flex;align-items: center;">
+                        <img class="fa" style="height: 30px;width: 30px; padding:0; border : 1px solid black" src="res/flags/ua-flag.png"> 
+                    <p style="padding-left:5px">UKR</p>
+                    </div>
+                {{else }}
+                    <div style="display: flex;align-items: center;">
+                        <img class="fa" style="height: 30px;width: 30px; padding:0; border : 1px solid black" src="res/flags/poland-big.png"> 
+                        <p style="padding-left:5px">POL</p>
+                    </div>
+                {{/if}}
+            
+            {{#if isOptions}}
+             <div style="top:50px; right:10px; position: absolute;  width:100px; display: flex;flex-direction: column; cursor:pointer">
+                {{#if @global.currLanguage != 'rus'}}
+                    <div on-click="@.selectOption('rus')" class="fa-wrapper"  style="display: flex; align-items: center;justify-content: space-evenly;">
+                        <img class="fa" style="height: 30px;width: 30px; padding:0; border : 1px solid black" src="res/flags/poland-big.png"> RUS
+                    </div>
+                {{/if}}
+                {{#if @global.currLanguage != 'pol'}}
+                    <div on-click="@.selectOption('pol')" class="fa-wrapper" style="display: flex; align-items: center;justify-content: space-evenly;">
+                        <img class="fa" style="height: 30px;width: 30px; padding:0; border : 1px solid black" src="res/flags/poland-big.png"> POL
+                    </div>
+                {{/if}}
+                {{#if @global.currLanguage != 'ukr'}}
+                    <div  on-click="@.selectOption('ukr')" class="fa-wrapper" style="display: flex; align-items: center;justify-content: space-evenly;">
+                        <img  class="fa" style="height: 30px;width: 30px; padding:0 ;  border : 1px solid black" src="res/flags/ua-flag.png"> UKR
+                    </div>    
+                {{/if}}    
+            </div>
+            {{/if}}    
+        </div>   
+        
+            </div>
+        `,
+        showHideMenu(event){
+            console.log("GGGGG" ,  event);
+
+            event.stopPropagation();
+               this.set("isOptions", !this.get("isOptions"))
+        },
+        selectOption (value) {
+              console.log("SELECT");
+            window.currLanguage = value;
+            this.update("@global.currLanguage")
+        },
+        onrender : function () {
+            // GET DEFAULT MLANGUAGE
+            
+                var userLang = navigator.language || navigator.userLanguage;
+                if(userLang.includes("ru"))
+                {
+                        window.currLanguage = "rus";
+                    this.update("@global.currLanguage")
+                }
+                else if (window.currLanguage = "uk"){
+                     window.currLanguage = "ukr";
+                     this.update("@global.currLanguage")
+                }
+                else if(window.currLanguage = "pl"){
+                       window.currLanguage = "pl";
+                    this.update("@global.currLanguage")
+                }
+                else {
+                     window.currLanguage = "rus";
+                    this.update("@global.currLanguage")
+                }
+
+                document.addEventListener("click" ,  ()=>{
+                    this.set("isOptions" ,  false);
+                })
+        },
+        data: {}
+    })
+
+// FIRST BLOCK 
+
+    new Ractive({
+        target: "#first-block",
+        template: `
+       <div  style=" background-image: url('res/photos/first_block.jpg');height: 100vh;background-size: cover;">
+            <div style="position: absolute;top: 25vh;left: 10vw;">AAAAAAAAAAAAAAA</div>
+        </div>`,
+        data: {}
+    })
+
+ // OPEN BLOCK
+     new Ractive({
+            target: "#opener-block",
+            template: `  
+                <p class="title">{{translate("block1.headerBlock" , @global.currLanguage)}}</p>
+                <div style="display:flex;display:flex;justify-content: space-around">
+                    <div style="">
+                    <video controls style="width: 50vw;">
+                        <source src="res/videos/sample.mp4" type="video/mp4">
+                        <source src="mov_bbb.ogg" type="video/ogg">
+                        Your browser does not support HTML video.
+                    </video>
+                  </div>
+                    <div id="advantage">
+                        <p class="without-margin"> <br> &#10004;  {{translate("block1.listAdvantages.advantage1" ,   @global.currLanguage)}}</p>
+                        <p class="without-margin" > <br> &#10004;  {{translate("block1.listAdvantages.advantage2" ,   @global.currLanguage )}}</p>
+                        <p class="without-margin" > <br> &#10004;  {{translate("block1.listAdvantages.advantage3" ,   @global.currLanguage)}}</p>
+                        <p class="without-margin" > <br> &#10004;  {{translate("block1.listAdvantages.advantage4" ,   @global.currLanguage )}}</p>
+                        <p class="without-margin" > <br> &#10004;  {{translate("block1.listAdvantages.advantage5" ,   @global.currLanguage)}}</p>
+                    </div>
+                </div>`,
+            data: {}
+        })
+
+    //  BIO BLOCK
+        new Ractive({
+                target: "#bio-block",
+                template: `
+                <div  style=" display:flex;width: 100%;justify-content: space-evenly; ">
+                    <div style="display: flex;flex-direction: column;">
+                            <img style="height:40vh ;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" src="res/photos/img_agelina.jpg"> 
+                    </div>
+                        <div style="width: 50vw;" >
+                            <p> {{translate("blockAbout.bio_first" ,   @global.currLanguage)}} </p>
+                             <p> {{translate("blockAbout.bio_second" ,   @global.currLanguage)}} </p>
+                        </div>    
+                </div>
+                `,
+                data: {}
+            })
+
+     //CARUSELL WIDGET
+            new Ractive ({
+                target : "#carusel-block",
+                template : `    
+                <p   class="title" >{{translate("blockPrices.title" ,   @global.currLanguage)}} </p>
+<div id="carusel-wrapper">
+<div class="center">
+    <div class="wrapper">
+        <div class="inner">
+            <div class="card">
+                <img src="./res/photos/prices/bedra.jpg">
+                <div class="content">
+                    <h1>{{translate("blockPrices.bedra" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="./res/photos/prices/belaia_linia_zhivota.jpg">
+                <div class="content">
+                    <h1> {{translate("blockPrices.belaia_linia_zhivota" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/bikini.jpg">
+                <div class="content">
+                    <h1> {{translate("blockPrices.bikini" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/goleni.jpg">
+                <div class="content">
+                 <h1> {{translate("blockPrices.goleni" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/litca.jpg">
+                <div class="content">
+                     <h1> {{translate("blockPrices.depilacia_lica" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/nogi.jpg">
+                <div class="content">
+                     <h1> {{translate("blockPrices.celie_nozki" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/podmishki.jpg">
+                <div class="content">
+                   <h1> {{translate("blockPrices.podmishki" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+            <div class="card">
+                <img src="./res/photos/prices/ysiki.jpg">
+                <div class="content">
+                     <h1> {{translate("blockPrices.ysiki" ,   @global.currLanguage)}} </h1>
+                </div>
+            </div>
+
+            <div style="visibility: hidden;" class="card">
+                <img src="./res/photos/prices/ysiki.jpg">
+                <div class="content">
+                    <h1>8 Product Design</h1>
+                    <h3>UI/UX, Design</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="map">
+        <button class="active first"></button>
+        <button class="second"></button>
+        <button class="third"></button>
+    </div>
+</div>
+</div>`,
+                    onrender : function () {
+                        const buttonsWrapper = this.find(".map");
+                        const slides = document.querySelector(".inner");
+                        buttonsWrapper.addEventListener("click", e => {
+                            if (e.target.nodeName === "BUTTON") {
+                                Array.from(buttonsWrapper.children).forEach(item =>
+                                    item.classList.remove("active")
+                                );
+                                if (e.target.classList.contains("first")) {
+                                    slides.style.transform = "translateX(-0%)";
+                                    e.target.classList.add("active");
+                                } else if (e.target.classList.contains("second")) {
+                                    slides.style.transform = "translateX(-33.33333333333333%)";
+                                    e.target.classList.add("active");
+                                } else if (e.target.classList.contains('third')) {
+                                    slides.style.transform = 'translatex(-66.6666666667%)';
+                                    e.target.classList.add('active');
+                                }
+                            }
+                        });
+            }})
+
+
+            window.ractiveBlockBtns = new Ractive({
+                    target: "#specialnoe-predlozhenie",
+                    template: `
+                     <p   class="title"  style="color:black"> {{ translate("blockPrices.specialnii_paketnii_predlozhenia",   @global.currLanguage) }} </p>
+                    
+                    <section id="timeline">
+        <div class="tl-item">
+            <div class="tl-bg" style="background-image: url(./res/photos/prices/specialnoe_predlozhenie_1.jpg)"></div>
+            <div class="tl-year">
+                <p class="f2 heading--sanSerif">1</p>
+            </div>
+    
+            <div class="tl-content">
+                <h1>{{ translate("blockPrices.bikini_podmishki",   @global.currLanguage) }}</h1>
+            </div>
+        </div>
+    
+        <div class="tl-item">
+            <div class="tl-bg" style="background-image: url(./res/photos/prices/specialnoe_predlozhenie_2.jpg)"></div>
+            <div class="tl-year">
+                <p class="f2 heading--sanSerif">2</p>
+            </div>
+    
+            <div class="tl-content">
+                <h1 class="f3 text--accent ttu"> {{ translate("blockPrices.bikini_podmishki_goleni",   @global.currLanguage) }} </h1>
+            </div>
+        </div>
+    
+        <div class="tl-item">
+            <div class="tl-bg" style="background-image: url(./res/photos/prices/specialnoe_predlozhenie_3.jpg)"></div>
+            <div class="tl-year">
+                <p class="f2 heading--sanSerif">3</p>
+            </div>
+            <div class="tl-content">
+                <h1 class="f3 text--accent ttu">{{ translate("blockPrices.bikini_podmishki_nogi",   @global.currLanguage) }}</h1>
+            </div>
+        </div>
+    </section>`,
+                    data: {}
+                })
+
+                // FAQ
+                     new Ractive({
+                        target: "#faq",
+                        template: `
+                        <p class="title">{{translate("blockFAQ.title", @global.currLanguage)}} </p>
+                            <div class="faq-content">
+                                <div class="faq-question">
+                                    <input id="q1" type="checkbox" class="panel">
+                                        <label for="q1" class="panel-title">{{translate("blockFAQ.question1.question", @global.currLanguage)}}</label>
+                                        <div class="panel-content">{{translate("blockFAQ.question1.answer", @global.currLanguage)}}</div>
+                                </div>
+
+                                <div class="faq-question">
+                                    <input id="q2" type="checkbox" class="panel">
+                                        <label for="q2" class="panel-title">{{translate("blockFAQ.question2.question", @global.currLanguage)}}</label>
+                                        <div class="panel-content">{{translate("blockFAQ.question2.answer", @global.currLanguage)}}</div>
+                                </div>
+
+                                <div class="faq-question">
+                                    <input id="q3" type="checkbox" class="panel">
+                                        <label for="q3" class="panel-title">{{translate("blockFAQ.question3.question", @global.currLanguage)}}</label>
+                                        <div class="panel-content">{{translate("blockFAQ.question3.answer", @global.currLanguage)}}</div>
+                                </div>
+
+                                <div class="faq-question">
+                                    <input id="q4" type="checkbox" class="panel">
+                                        <label for="q4" class="panel-title">{{translate("blockFAQ.question4.question", @global.currLanguage)}}</label>
+                                        <div class="panel-content">{{translate("blockFAQ.question4.answer", @global.currLanguage)}}</div>
+                                </div>
+                            </div>
+                `,
+                        data: {}
+                    })
+
+     new Ractive({
+            target: "#footer",
+            template: `
+        <div  style="background:black;background:black;display: flex;width: 100vw;justify-content: space-evenly;">
+            <div>
+                <p class="footer-text">ADDRESS : </p>
+                <p class="footer-text" > adress a a a </p>
+            </div>
+
+            <div>
+                <p class="footer-text">FOLLOW US : </p>
+                <p class="footer-text" > INSTAGRAM</p>
+                <p class="footer-text" > FACEBOOK </p>
+                <p class="footer-text" > TIK TOK </p>
+            </div>
+
+            <div>
+                <p class="footer-text"> CONTACT US : </p>
+                <p class="footer-text" > EMAIL</p>
+                <p class="footer-text" > TEL </p>
+            </div>
+        </div>`,
+            data: {}
+        })
+    
+    </script>
+</html>

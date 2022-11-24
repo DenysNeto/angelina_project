@@ -1,0 +1,325 @@
+<html>
+  <head>
+    <!--
+      required editor styles
+    -->
+    <link rel="stylesheet" href="https://unpkg.com/@bpmn-io/form-js@0.7.1/dist/assets/form-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/@bpmn-io/form-js@0.7.1/dist/assets/form-js-editor.css">
+    <link rel="stylesheet" href="https://unpkg.com/@bpmn-io/form-js@0.7.1/dist/assets/dragula.css">
+
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      #form {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="form"></div>
+
+    <!--
+      add your form schema to this script tag
+      alternatively, load it asynchronously from anywhere
+    -->
+    <script type="application/form-schema">
+{
+  "schemaVersion": 1,
+  "exporter": {
+    "name": "form-js",
+    "version": "0.1.0"
+  },
+  "components": [
+  ],
+  "type": "default"
+}
+    </script>
+
+    <!--
+      required editor script
+    -->
+    <script src="https://unpkg.com/@bpmn-io/form-js@0.7.1/dist/form-editor.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+function buildOperatorsStructure(where) {
+    for (let key in where) {
+        let keyOutput = "";
+        if (key.includes("/")) {
+            keyOutput = key.replace('/', '.');
+            // where[keyOutput] = where[key];
+            _.set(where, keyOutput, where[key])
+             delete where[key]
+        }
+        else {
+            keyOutput = key;
+            // ADDED
+            if (where[key].constructor.name == "Object") {
+              buildOperatorsStructure(where[key])
+            }
+            else if (Array.isArray(where[key])) {
+                where[key].forEach(el => {
+                  buildOperatorsStructure(el)
+                })
+            }
+            _.set(where, keyOutput, where[key])
+        }
+    }
+ return where;
+}
+
+// RAMA 2
+// {
+//     "name": {
+//         "ff/like": "dfdfdf"
+//     }
+// }
+
+// ARRAY
+// {
+//     "or": [
+//         {
+//             "name/like": "ddddd"
+//         },
+//         {
+//             "name/like": "ddddd"
+//         }
+//     ]
+// }
+
+// SQL RAMA 1
+//{"city/like":"bb"}
+
+
+let data = {"name":{"ff/like":"dfdfdf"}}
+
+
+
+
+// TODO CHANGE OLD
+//let where = msg.where;
+// let fields = msg.fields;
+// let schema = msg.schema;
+
+// TODO CHANGE NEW
+
+
+        let where = data;
+        let schema  = {db : "nomgo"}
+   
+
+
+
+
+let output = {};
+let replace = {};
+
+// step 1 go  
+
+
+
+where = op(where);
+
+
+console.log("WHERE" , where)
+
+
+function buildOperatorsStructure(where) {
+    for (let key in where) {
+        let keyOutput = "";
+        if (key.includes("/")) {
+            keyOutput = key.replace('/', '.');
+            // where[keyOutput] = where[key];
+            _.set(where, keyOutput, where[key])
+            delete where[key]
+        }
+        else {
+            keyOutput = key;
+            // ADDED
+            if (where[key].constructor.name == "Object") {
+                buildOperatorsStructure(where[key])
+            }
+            else if (Array.isArray(where[key])) {
+                where[key].forEach(el => {
+                    buildOperatorsStructure(el)
+                })
+            }
+            _.set(where, keyOutput, where[key])
+        }
+    }
+    return where;
+}
+
+
+// EXAMPLE NODE JS
+
+function op(where) {
+      output = buildOperatorsStructure(where);
+
+    if (true || schema.db == 'mongo') {
+        let operators = {
+            "eq": "$eq",
+            "gt": "$gt",
+            "gte": "$gte",
+            "lt": "$lt",
+            "lte": "$lte",
+            "in": "$in",
+            "ne": "$ne",
+            "nin": "$nin",
+            "and": "$and",
+            "not": "$not",
+            "nor": "$nor",
+            "or": "$or",
+            "exists": "$exists",
+            "expr": "$expr",
+            "like": "$regex"
+        }
+        var str = JSON.stringify(output);
+        for (let key in operators) {
+            str = replaceAll(str, '"' + key + '":', '"' + operators[key] + '":');
+            str = replaceAll(str, '""', null);
+            // the : is to replace only in keys not in values
+        }
+        function replaceAll(str, find, replace) {
+            return str.replace(new RegExp(find, 'g'), replace);
+        }
+        output = JSON.parse(str);
+        // "$options": "i" is to make the regex not case sensitive
+
+        let replaceRegexMongo = (output) => {
+             for (let query_key in output) {
+                if (typeof output[query_key] == "object" && output[query_key].hasOwnProperty("$regex")) {
+                    output[query_key]["$options"] = "i"
+                }
+                if(typeof output[query_key] == "object")
+                {
+                    Object.keys(output[query_key]).forEach(el=>{
+                        replaceRegexMongo(output[query_key]);
+                    })
+                }
+                if(Array.isArray(output[query_key]))
+                {
+                    output[query_key].forEach(el=>{
+                             replaceRegexMongo(el);
+                    }) 
+                }
+            }
+        }
+
+        replaceRegexMongo(output);
+
+    }
+    if (schema.db == 'sql' || schema.db == 'sql_mongo') {
+        let operators =
+        {
+            "eq": "$eq",
+            "gt": "$gt",
+            "gte": "$gte",
+            "lt": "$lt",
+            "lte": "$lte",
+            "ne": "$ne",
+            "not": "$not",
+            "in": "$in",
+            "nin": "$notIn",
+            "is": "$is",
+            "like": "$iLike",
+            "nlike": "$notILike",
+            "expr": "$regexp",
+            "nexpr": "$notRegexp",
+            "or": "$or",
+            "any": "$any",
+        }
+        var str = JSON.stringify(output);
+        for (let key in operators) {
+            str = replaceAll(str, '"' + key + '":', '"' + operators[key] + '":');
+            str = replaceAll(str, '""', null);
+            // the : is to replace only in keys not in values
+        }
+        function replaceAll(str, find, replace) {
+            return str.replace(new RegExp(find, 'g'), replace);
+        }
+        output = JSON.parse(str);
+
+        // add % before and after iLike values (sequelize documentation)
+
+        let replaceRegexSQL = (output) => {
+            for (let query_key in output) {
+                 if (typeof output[query_key] == "object" && output[query_key].hasOwnProperty("$iLike")) {
+                    output[query_key].$iLike = "%" + output[query_key].$iLike + "%"
+                }
+                if (typeof output[query_key] == "object") {
+                    Object.keys(output[query_key]).forEach(el => {
+                        replaceRegexSQL(output[query_key]);
+                    })
+                }
+                if (Array.isArray(output[query_key])) {
+                    output[query_key].forEach(el => {
+                        replaceRegexSQL(el);
+                    })
+                }
+            }
+        }
+
+
+        // SQL
+        // for (let query_key in output) {
+        //     if (typeof output[query_key] == "object" && output[query_key].hasOwnProperty("$iLike")) {
+        //         output[query_key].$iLike = "%" + output[query_key].$iLike + "%"
+        //     }
+        // }
+
+        replaceRegexSQL(output)
+
+    }
+    return output
+}
+
+
+
+
+function go(replace) {
+    // Replace msg. with actual values
+    for (var key in replace) {
+        var value;
+        let newKey = '_id';
+        if (replace[key] && typeof replace[key] == 'string' && replace[key].substr(0, 4) == 'msg.') {
+            //node.warn(key);
+            value = _.get(msg, replace[key].substr(4));
+            if (value == undefined) {
+                value = 'undefined'
+            }
+        } else {
+            value = replace[key];
+        }
+        if (value === undefined) {
+            delete replace[key];
+        }
+        replace[key] = value
+        if (schema.db == 'mongo' && key == 'id') {
+            replace[newKey] = replace[key];
+            delete replace[key];
+        }
+    }
+    if (replace && replace.constructor.name == "Object") {
+        for (let i in replace) {
+            go(replace[i]);
+        }
+    }
+
+}
+
+
+// msg.where = where;
+// msg.fields = fields;
+// node.send([msg, null])
+
+    
+
+    </script>
+  </body>
+</html>
